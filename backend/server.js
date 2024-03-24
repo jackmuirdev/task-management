@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import { fileURLToPath } from 'url';
 import path from 'path';
 import { connectDB } from "./database/db.js";
+import userRoutes from "./routes/userRoutes.js";
+import taskRoutes from "./routes/taskRoutes.js";
 
 // Get the directory path of the current module
 const __filename = fileURLToPath(import.meta.url);
@@ -18,13 +20,24 @@ const port = process.env.PORT || 10001;
 // Create an Express application
 const app = express();
 
+// Middleware
+
+// Routes
+app.use('/api/users', userRoutes);
+app.use('/api/tasks', taskRoutes);
+
 // Connect to MongoDB
 connectDB()
   .then(() => {
-    // Start the server after successfully connecting to the database
-    app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
-    });
+    try {
+      // Start the server after successfully connecting to the database
+      app.listen(port, () => {
+        console.log(`Server is running on port ${port}`);
+      });
+    } catch (error) {
+      console.error("Error starting server:", error);
+      process.exit(1); // Exit the process if unable to start the server
+    }
   })
   // Error handling for database connection
   .catch((error) => {

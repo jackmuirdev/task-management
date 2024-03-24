@@ -11,8 +11,8 @@ const taskSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['pending', 'in progress', 'completed'],
-    default: 'pending'
+    enum: ['to do', 'in progress', 'completed'],
+    default: 'to do'
   },
   createdAt: {
     type: Date,
@@ -26,4 +26,4 @@ const taskSchema = new mongoose.Schema({
 
 const Task = mongoose.model('Task', taskSchema);
 
-module.exports = Task;
+export default Task;
