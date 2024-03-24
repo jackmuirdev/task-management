@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
+  "type": "module",
   "scripts": {
+    "backend": "cd backend && nodemon server.js",
+    "frontend": "cd frontend && npm start --prefix client",
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Jack Muir",
