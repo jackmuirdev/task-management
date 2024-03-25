@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "backend": "cd backend && nodemon server.js",
-    "frontend": "cd frontend && npm start --prefix client",
+    "frontend": "cd frontend && npm run start",
     "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
     "test": "echo \"Error: no test specified\" && exit 1",
     "data:import": "cd backend && node dataManagement.js import",
