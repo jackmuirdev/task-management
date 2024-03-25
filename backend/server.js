@@ -5,42 +5,59 @@ import path from 'path';
 import { connectDB } from "./database/db.js";
 import userRoutes from "./routes/userRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
+import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import swaggerUi from "swagger-ui-express";
+import swaggerDocs from "./api/swaggerApis.js";
 
-// Get the directory path of the current module
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Construct the path to the .env file
-const envPath = path.resolve(__dirname, '../.env');
-// Load the .env file
-dotenv.config({ path: envPath });
+dotenv.config();
 
 // Get the port from the environment variables or use 10001 as the default port
 const port = process.env.PORT || 10001;
 // Create an Express application
 const app = express();
+// Connect to the database
+connectDB();
 
-// Middleware
+// Parse incoming request bodies in JSON format
+app.use(express.json());
+// Parse incoming request bodies in URL-encoded format
+app.use(express.urlencoded({ extended: true }));
+// Parse cookies attached to the client request
+app.use(cookieParser());
+// Enable Cross-Origin Resource Sharing (CORS)
+app.use(cors());
 
 // Routes
 app.use('/api/users', userRoutes);
 app.use('/api/tasks', taskRoutes);
 
-// Connect to MongoDB
-connectDB()
-  .then(() => {
-    try {
-      // Start the server after successfully connecting to the database
-      app.listen(port, () => {
-        console.log(`Server is running on port ${port}`);
-      });
-    } catch (error) {
-      console.error("Error starting server:", error);
-      process.exit(1); // Exit the process if unable to start the server
-    }
-  })
-  // Error handling for database connection
-  .catch((error) => {
-    console.error("Error connecting to database:", error);
-    process.exit(1); // Exit the process if unable to connect to the database
+// Swagger API documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+// Production / Development
+if (process.env.NODE_ENV === 'production') {
+  // Production
+  app.use(express.static(path.join(__dirname, '../frontend/build')));
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../frontend/build/index.html'));
   });
+} else {
+  // Development
+  app.get('/', (req, res) => {
+    res.send('API is running...');
+  });
+}
+
+// Middleware
+app.use(notFound);
+app.use(errorHandler);
+
+try {
+  app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
+  });
+} catch (error) {
+  console.error(`Error connecting to server: ${error.message}`);
+}
