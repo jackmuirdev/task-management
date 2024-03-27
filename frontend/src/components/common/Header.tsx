@@ -13,6 +13,7 @@ import { IconButton, Menu, ThemeProvider } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import { Link } from 'react-router-dom';
 import { theme } from '../../assets/Theme';
+import NotReady from '../error/NotReady';
 
 function Header() {
   const [open, setOpen] = React.useState(false);
@@ -83,16 +84,17 @@ function Header() {
                     to='/'
                     sx={{ py: '6px', px: '12px' }}
                   >
-                    <Typography variant="body2" color="text.primary">
+                    <Typography color="text.primary">
                       Dashboard
                     </Typography>
                   </MenuItem>
                   <MenuItem
                     component={Link}
-                    to="/timeline"
+                    to="/"
                     sx={{ py: '6px', px: '12px' }}
+                    onClick={NotReady}
                   >
-                    <Typography variant="body2" color="text.primary">
+                    <Typography color="text.primary">
                       Timeline
                     </Typography>
                   </MenuItem>
